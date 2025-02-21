@@ -1,23 +1,19 @@
 import { useSelector, useDispatch } from "react-redux";
-import { deleteContact } from "../../redux/contactsSlice";
+import { selectFilteredContacts } from "../../redux/contactsSlice"; // Використовуємо мемоізований селектор
+import { deleteContact } from "../../redux/contactsOps";
 import toast from "react-hot-toast";
 import css from "./ContactList.module.css";
 import { GrUserManager } from "react-icons/gr";
 import { FcPhoneAndroid } from "react-icons/fc";
 
 const ContactList = () => {
-  const contacts = useSelector((state) => state.contacts.items);
-  const searchQuery = useSelector((state) => state.filters.name);
+  const filteredContacts = useSelector(selectFilteredContacts); // Отримуємо відфільтровані контакти
   const dispatch = useDispatch();
 
   const handleDelete = (id, name) => {
     dispatch(deleteContact(id));
     toast.success(`Contact "${name}" deleted!`);
   };
-
-  const filteredContacts = contacts.filter((contact) =>
-    contact.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
 
   return (
     <ul className={css.list}>

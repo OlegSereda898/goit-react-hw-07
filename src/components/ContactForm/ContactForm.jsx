@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addContact } from "../../redux/contactsSlice";
-import { nanoid } from "nanoid";
+import { selectContacts } from "../../redux/contactsSlice";
+import { addContact, fetchContacts } from "../../redux/contactsOps";
 import { toast } from "react-hot-toast";
 import css from "./ContactForm.module.css";
 
@@ -9,7 +9,7 @@ const ContactForm = () => {
   const [name, setName] = useState("");
   const [number, setNumber] = useState("");
   const dispatch = useDispatch();
-  const contacts = useSelector((state) => state.contacts.items);
+  const contacts = useSelector(selectContacts);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -33,7 +33,9 @@ const ContactForm = () => {
       return;
     }
 
-    dispatch(addContact({ id: nanoid(), name, number }));
+    dispatch(addContact({ name, number })).then(() => {
+      dispatch(fetchContacts());
+    });
     toast.success("Contact added successfully!");
     setName("");
     setNumber("");

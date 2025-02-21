@@ -2,15 +2,26 @@ import ContactForm from "./components/ContactForm/ContactForm";
 import SearchBox from "./components/SearchBox/SearchBox";
 import ContactList from "./components/ContactList/ContactList";
 import { useSelector, useDispatch } from "react-redux";
-import { addContact, deleteContact } from "./redux/contactsSlice";
+import {
+  selectContacts,
+  selectError,
+  selectFilteredContacts,
+  selectLoading,
+} from "./redux/contactsSlice";
+import { addContact, deleteContact, fetchContacts } from "./redux/contactsOps";
 import { changeFilter } from "./redux/filtersSlice";
 import { toast } from "react-hot-toast";
 import "./App.css";
+import { useEffect } from "react";
 
 function App() {
-  const contacts = useSelector((state) => state.contacts.items);
-  const searchQuery = useSelector((state) => state.filters.name);
+  const contacts = useSelector(selectContacts);
+  const filteredContacts = useSelector(selectFilteredContacts);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchContacts());
+  }, [dispatch]);
 
   const handleAddContact = (newContact) => {
     const isDuplicate = contacts.some(
@@ -35,9 +46,16 @@ function App() {
     dispatch(changeFilter(query));
   };
 
-  const filteredContacts = contacts.filter((contact) =>
-    contact.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const loading = useSelector(selectLoading);
+  const error = useSelector(selectError);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
     <>
