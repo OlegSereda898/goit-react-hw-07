@@ -49,14 +49,6 @@ function App() {
   const loading = useSelector(selectLoading);
   const error = useSelector(selectError);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
-
   return (
     <>
       <h1 className="title">Phonebook</h1>
@@ -66,6 +58,8 @@ function App() {
         contacts={filteredContacts}
         onDeleteContact={handleDeleteContact}
       />
+      {loading && <div className="overlay">Loading...</div>}
+      {error && <div className="overlay error">Error: {error}</div>}
     </>
   );
 }
